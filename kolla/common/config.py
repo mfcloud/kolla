@@ -20,7 +20,7 @@ from kolla.version import version_info as version
 
 
 BASE_OS_DISTRO = ['centos', 'rhel', 'ubuntu', 'oraclelinux', 'debian']
-BASE_ARCH = ['x86_64', 'ppc64le', 'aarch64']
+BASE_ARCH = ['x86_64', 'ppc64le', 'aarch64', 's390x']
 DEFAULT_BASE_TAGS = {
     'centos': '7',
     'rhel': '7',
