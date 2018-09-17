@@ -1,0 +1,73 @@
+#!/bin/bash
+
+function printusage() {
+    # @Description:
+    myname=$(basename $0)
+    echo "Usage: "
+    echo "  (Create manifest for image repos to support multi-arch: x86_64 and s390x)"
+    echo "  $myname -n NAMESPACE -t TAG [-r REPOSERVER] [-h]"
+    echo ""
+    echo "  Options:"
+    echo "  -n NAMESPACE                       Image namespace"
+    echo "  -t TAG                             Image tag"
+    echo "  -r REPOSERVER                      The registry server address:port"
+    echo "  -h                                 Print this help"
+    echo ""
+}
+
+function checkrequiredargs() {
+    # @Description:
+    #   Check All the required arguments has been set
+    requiredargs=("namespace" "tag")
+
+    for argname in ${requiredargs[@]}
+    do
+        if [[ -z "${!argname}" ]] ; then
+            echo "Missing required arguments!"
+            printusage
+            exit 1
+        fi
+    done
+}
+
+server=""
+
+# Parse the optional args
+while [ $# -gt 0 ]
+do
+    case $1 in
+        -n)
+        namespace="$2"
+        shift
+        ;;
+        -t)
+        tag="$2"
+        shift
+        ;;
+        -r)
+        server="$2"
+        shift
+        ;;
+        *)
+        printusage
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+checkrequiredargs
+
+basedir=$(cd `dirname $0`;pwd;cd - &> /dev/null)
+
+images=($(awk '{print $1}' ${basedir}/IMAGELIST))
+
+for image in ${images[@]}
+do
+    echo "Handling image: ${image}..."
+    #docker rmi ${server}/${namespace}/${image}:${tag}
+    docker manifest create --insecure ${server}/${namespace}/${image}:${tag} ${server}/${namespace}/${image}-x86:${tag} ${server}/${namespace}/${image}-s390x:${tag}
+    docker manifest annotate ${server}/${namespace}/${image}:${tag} ${server}/${namespace}/${image}-x86:${tag} --os linux --arch amd64
+    docker manifest annotate ${server}/${namespace}/${image}:${tag} ${server}/${namespace}/${image}-s390x:${tag} --os linux --arch s390x
+    docker manifest push --insecure ${server}/${namespace}/${image}:${tag}
+done
