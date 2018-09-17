@@ -1,0 +1,99 @@
+#!/bin/bash
+
+function printusage() {
+    # @Description:
+    myname=$(basename $0)
+    echo "Usage: "
+    echo "  (Pull image from docker repo and push back with arch suffixed image to repo)"
+    echo "  $myname -a ARCH -n NAMESPACE -t TAG [-r REPOSERVER] [-p] [-h]"
+    echo ""
+    echo "  Options:"
+    echo "  -a ARCH                            Image architecture, available value: x86_64, s390x"
+    echo "  -n NAMESPACE                       Image namespace"
+    echo "  -t TAG                             Image tag"
+    echo "  -r REPOSERVER                      The registry server address:port"
+    echo "  -p                                 Pushed, means the images have already been pushed before. server tag has been added."
+    echo "  -h                                 Print this help"
+    echo ""
+}
+
+function checkrequiredargs() {
+    # @Description:
+    #   Check All the required arguments has been set
+    requiredargs=("arch" "namespace" "tag")
+
+    for argname in ${requiredargs[@]}
+    do
+        if [[ -z "${!argname}" ]] ; then
+            echo "Missing required arguments!"
+            printusage
+            exit 1
+        fi
+    done
+}
+
+function checkrequiredtools() {
+    # @Description:
+    #   Check All the required tools has been installed
+    requiredtools=("docker")
+
+    for tool in ${requiredtools[@]}
+    do
+        if [[ $(which $tool &> /dev/null;echo $?) -ne 0 ]] ; then
+            echo "Missing required tool: $tool!"
+            printusage
+            exit 1
+        fi
+    done
+}
+
+server_tag_added=0
+server=""
+
+# Parse the optional args
+while [ $# -gt 0 ]
+do
+    case $1 in
+        -a)
+        arch="$2"
+        shift
+        ;;
+        -n)
+        namespace="$2"
+        shift
+        ;;
+        -t)
+        tag="$2"
+        shift
+        ;;
+        -r)
+        server="$2"
+        shift
+        ;;
+        -p)
+        server_tag_added=1
+        ;;
+        *)
+        printusage
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+checkrequiredargs
+checkrequiredtools
+
+basedir=$(cd `dirname $0`;pwd;cd - &> /dev/null)
+
+images=($(awk '{print $1}' ${basedir}/IMAGELIST))
+
+for image in ${images[@]}
+do
+    if [[ $server_tag_added -eq 1 ]]; then
+        docker image tag ${server}/${namespace}/${image}:${tag} ${server}/${namespace}/${image}-${arch}:${tag}
+    else
+        docker image tag ${namespace}/${image}:${tag} ${server}/${namespace}/${image}-${arch}:${tag}
+    fi
+    docker push ${server}/${namespace}/${image}-${arch}:${tag}
+done

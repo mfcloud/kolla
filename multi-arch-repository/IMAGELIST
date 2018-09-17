@@ -1,0 +1,13 @@
+ubuntu-binary-kolla-toolbox
+ubuntu-binary-nova-compute
+ubuntu-binary-neutron-openvswitch-agent
+ubuntu-binary-neutron-base
+ubuntu-binary-nova-ssh
+ubuntu-binary-nova-base
+ubuntu-binary-openstack-base
+ubuntu-binary-nova-libvirt
+ubuntu-binary-openvswitch-db-server
+ubuntu-binary-openvswitch-vswitchd
+ubuntu-binary-openvswitch-base
+ubuntu-binary-cron
+ubuntu-binary-base
