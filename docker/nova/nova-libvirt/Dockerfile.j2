@@ -41,7 +41,7 @@ LABEL maintainer="{{ maintainer }}" name="{{ image_name }}" build-date="{{ build
         ] %}
     {% endif %}
 
-    {% if base_arch != "ppc64le" %}
+    {% if base_arch not in ["ppc64le", "s390x"] %}
         {% set nova_libvirt_packages = nova_libvirt_packages + [
             'dmidecode',
         ] %}
@@ -58,7 +58,7 @@ LABEL maintainer="{{ maintainer }}" name="{{ image_name }}" build-date="{{ build
             ] %}
         {% endif %}
     {% elif base_distro in ['ubuntu'] %}
-        {% if base_arch != "ppc64le" %}
+        {% if base_arch not in ["ppc64le", "s390x"] %}
             {% set nova_libvirt_packages = nova_libvirt_packages + [
                 'xen-utils-4.6'
             ] %}
