@@ -43,7 +43,7 @@ LABEL maintainer="{{ maintainer }}" name="{{ image_name }}" build-date="{{ build
         'python-dev'
      ] %}
 
-    {% if base_arch == 'aarch64' and base_distro == 'ubuntu' %}
+    {% if base_arch in ['aarch64', 's390x'] and base_distro == 'ubuntu' %}
          {% set kolla_toolbox_packages = kolla_toolbox_packages + [
              'libmysqlclient-dev'
          ] %}
