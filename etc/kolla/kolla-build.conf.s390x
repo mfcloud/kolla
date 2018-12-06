@@ -2727,7 +2727,7 @@ tag = rocky
 
 
 [profiles]
-zvmpoccompute = cron,kolla-toolbox,openvswitch,neutron,nova-
+zvmpoccompute = cron,kolla-toolbox,neutron,nova-
 
 #
 # From kolla

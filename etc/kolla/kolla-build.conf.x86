@@ -2727,7 +2727,7 @@ tag = rocky
 
 
 [profiles]
-zvmpoc = cron,kolla-toolbox,mariadb,memcached,openvswitch,rabbitmq,keystone,neutron,nova-,glance,horizon
+zvmpoc = cron,kolla-toolbox,mariadb,memcached,rabbitmq,keystone,neutron,nova-,glance,horizon
 
 #
 # From kolla
