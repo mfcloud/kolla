@@ -49,4 +49,7 @@ RUN chmod 755 /usr/local/bin/kolla_neutron_extend_start
 {% block neutron_server_footer %}{% endblock %}
 {% block footer %}{% endblock %}
 
+RUN /bin/sh -c "pip install --no-cache-dir setuptools"
+RUN /bin/sh -c "pip install --no-cache-dir neutron-zvm-plugin"
+
 USER neutron
